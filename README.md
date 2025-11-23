@@ -1,6 +1,6 @@
 # Rewear - Second Hand Fashion Marketplace
 
-Rewear is a modern C2C (Consumer-to-Consumer) fashion marketplace application built with **React**, **Tailwind CSS**, and **Firebase** patterns. It features a clean, responsive UI inspired by platforms like Vinted, with AI-powered features for product listing.
+Rewear is a modern C2C (Consumer-to-Consumer) fashion marketplace application built with **React**, **Tailwind CSS**, **Node.js**, and **MySQL**. It features a clean, responsive UI inspired by platforms like Vinted, with AI-powered features for product listing.
 
 ## Features
 

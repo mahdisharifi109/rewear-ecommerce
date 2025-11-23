@@ -1,8 +1,6 @@
-'use server';
-
-import { db } from '@/lib/firebase';
-import { collection, getDocs, query, where, limit, orderBy, QueryConstraint } from 'firebase/firestore';
 import { Product, ProductCategory, ProductCondition } from '../../types';
+
+const API_URL = 'http://localhost:3001/api';
 
 export interface ProductFilters {
   query?: string;
@@ -103,81 +101,22 @@ const MOCK_PRODUCTS: Product[] = [
 
 export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
   try {
-    const productsRef = collection(db, 'products');
-    const constraints: QueryConstraint[] = [
-        where('status', '==', 'available'),
-        orderBy('createdAt', 'desc'),
-        limit(50)
-    ];
-
-    // Basic Firestore Filtering
-    if (filters?.category) {
-        constraints.push(where('category', '==', filters.category));
-    }
-    
-    // Execute Query
-    const q = query(productsRef, ...constraints);
-    const snapshot = await getDocs(q);
-
-    let results: Product[] = [];
-
-    if (!snapshot.empty) {
-        results = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        })) as Product[];
-    } else {
-        // If DB is empty, use mock data for demo purposes
-        results = [...MOCK_PRODUCTS];
-    }
-
-    // Advanced In-Memory Filtering 
-    // (Simulating complex search engine logic that Firestore struggles with natively without Algolia/Typesense)
+    const params = new URLSearchParams();
     if (filters) {
-        if (filters.category) {
-            // Re-apply for mock data case
-            results = results.filter(p => p.category === filters.category);
-        }
-        if (filters.size) {
-            results = results.filter(p => p.size.includes(filters.size!));
-        }
-        if (filters.minPrice !== undefined) {
-            results = results.filter(p => p.price >= filters.minPrice!);
-        }
-        if (filters.maxPrice !== undefined) {
-            results = results.filter(p => p.price <= filters.maxPrice!);
-        }
-        if (filters.query) {
-            const lowerQ = filters.query.toLowerCase();
-            results = results.filter(p => 
-                p.name.toLowerCase().includes(lowerQ) || 
-                p.description.toLowerCase().includes(lowerQ)
-            );
-        }
-
-        // Sorting
-        if (filters.sortBy) {
-          switch (filters.sortBy) {
-            case 'price_asc':
-              results.sort((a, b) => a.price - b.price);
-              break;
-            case 'price_desc':
-              results.sort((a, b) => b.price - a.price);
-              break;
-            case 'likes':
-              results.sort((a, b) => b.likes - a.likes);
-              break;
-            case 'newest':
-              results.sort((a, b) => new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime());
-              break;
-            default:
-              break;
-          }
-        }
+      if (filters.category) params.append('category', filters.category);
+      if (filters.size) params.append('size', filters.size);
+      if (filters.minPrice) params.append('minPrice', filters.minPrice.toString());
+      if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
+      if (filters.query) params.append('search', filters.query);
+      if (filters.sortBy) params.append('sortBy', filters.sortBy);
     }
 
-    return results;
-
+    const response = await fetch(`${API_URL}/products?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+    const products = await response.json();
+    return products;
   } catch (error) {
     console.error("Error fetching products:", error);
     return MOCK_PRODUCTS; // Fallback ensures UI doesn't crash
@@ -185,6 +124,14 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-    const product = MOCK_PRODUCTS.find(p => p.id === id);
-    return product || null;
+  try {
+    const response = await fetch(`${API_URL}/products/${id}`);
+    if (!response.ok) {
+        return MOCK_PRODUCTS.find(p => p.id === id) || null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return MOCK_PRODUCTS.find(p => p.id === id) || null;
+  }
 }
