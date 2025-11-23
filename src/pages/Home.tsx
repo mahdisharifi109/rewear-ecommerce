@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import ProductCard from '../components/ui/ProductCard';
-import { Product } from '../types';
+import ProductCard from '../features/products/components/ProductCard';
+import { Product, ProductCategory, ProductCondition } from '../types/index';
 import { Loader2 } from 'lucide-react';
 
 // Mock Data Service
@@ -16,9 +16,9 @@ const fetchProducts = async (): Promise<Product[]> => {
       name: 'Zara Denim Jacket',
       description: 'Classic oversized denim jacket.',
       price: 15.00,
-      category: 'Clothing',
+      category: ProductCategory.CLOTHING,
       size: 'M / 38 / 10',
-      condition: 'good',
+      condition: ProductCondition.GOOD,
       status: 'available',
       sellerId: 'user1',
       imageUrls: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600'],
@@ -30,9 +30,9 @@ const fetchProducts = async (): Promise<Product[]> => {
       name: 'Vintage Leather Bag',
       description: 'Genuine leather.',
       price: 45.50,
-      category: 'Bags',
+      category: ProductCategory.BAGS,
       size: 'One Size',
-      condition: 'like-new',
+      condition: ProductCondition.LIKE_NEW,
       status: 'available',
       sellerId: 'user2',
       imageUrls: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=600'],
@@ -44,9 +44,9 @@ const fetchProducts = async (): Promise<Product[]> => {
       name: 'Nike Sneakers',
       description: 'Air force one.',
       price: 80.00,
-      category: 'Shoes',
+      category: ProductCategory.SHOES,
       size: '39',
-      condition: 'good',
+      condition: ProductCondition.GOOD,
       status: 'available',
       sellerId: 'user3',
       imageUrls: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=600'],
@@ -58,9 +58,9 @@ const fetchProducts = async (): Promise<Product[]> => {
       name: 'Silk Scarf',
       description: 'Hand painted silk scarf.',
       price: 5.00,
-      category: 'Accessories',
+      category: ProductCategory.ACCESSORIES,
       size: 'One Size',
-      condition: 'new',
+      condition: ProductCondition.NEW,
       status: 'available',
       sellerId: 'user4',
       imageUrls: ['https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&q=80&w=600'],
@@ -72,9 +72,9 @@ const fetchProducts = async (): Promise<Product[]> => {
         name: 'Levi\'s 501 Jeans',
         description: 'Classic fit.',
         price: 25.00,
-        category: 'Clothing',
+        category: ProductCategory.CLOTHING,
         size: 'W30 L32',
-        condition: 'fair',
+        condition: ProductCondition.FAIR,
         status: 'available',
         sellerId: 'user5',
         imageUrls: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=600'],
@@ -86,9 +86,9 @@ const fetchProducts = async (): Promise<Product[]> => {
         name: 'Dr Martens Boots',
         description: 'Black leather boots.',
         price: 110.00,
-        category: 'Shoes',
+        category: ProductCategory.SHOES,
         size: '40',
-        condition: 'like-new',
+        condition: ProductCondition.LIKE_NEW,
         status: 'available',
         sellerId: 'user6',
         imageUrls: ['https://images.unsplash.com/photo-1638319533874-e0f306868035?auto=format&fit=crop&q=80&w=600'],

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { Search, Menu, X, Bell, Mail, Heart, User as UserIcon, ChevronDown, Filter } from 'lucide-react';
+import { Search, Menu, X, Bell, Mail, Heart, User as UserIcon, ChevronDown, Filter, LogOut } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ProductCategory } from '../types';
+import { useAuthStore } from '../features/auth/store';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { user, logout } = useAuthStore();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -224,19 +226,38 @@ const Header = () => {
           {/* Right Actions */}
           <div className="flex items-center gap-3 sm:gap-5">
             {/* User Auth/Menu */}
-            <div className="hidden md:flex items-center gap-4 text-muted-foreground text-sm">
-                <Link to="/profile" className="hover:text-primary transition-colors">
-                    <UserIcon size={20} />
+            {user ? (
+              <div className="hidden md:flex items-center gap-4 text-muted-foreground text-sm">
+                  <Link to="/profile" className="hover:text-primary transition-colors flex items-center gap-2">
+                      {user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt={user.fullName} className="w-6 h-6 rounded-full object-cover" />
+                      ) : (
+                        <UserIcon size={20} />
+                      )}
+                      <span className="text-xs font-medium">{user.fullName.split(' ')[0]}</span>
+                  </Link>
+                  <button className="hover:text-primary transition-colors">
+                      <Heart size={20} />
+                  </button>
+                  <button className="hover:text-primary transition-colors">
+                      <Mail size={20} />
+                  </button>
+                  <button onClick={logout} className="hover:text-red-500 transition-colors" title="Logout">
+                      <LogOut size={20} />
+                  </button>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center gap-3 text-sm font-medium">
+                <Link to="/login" className="text-primary hover:text-primary/80 px-3 py-2">
+                  Log in
                 </Link>
-                <button className="hover:text-primary transition-colors">
-                    <Heart size={20} />
-                </button>
-                <button className="hover:text-primary transition-colors">
-                    <Mail size={20} />
-                </button>
-            </div>
+                <Link to="/register" className="text-muted-foreground hover:text-primary px-3 py-2 border border-gray-200 rounded-md hover:border-primary transition-colors">
+                  Sign up
+                </Link>
+              </div>
+            )}
 
-            <Link to="/sell">
+            <Link to={user ? "/sell" : "/login"}>
                <button className="hidden md:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2">
                   Sell now
                </button>

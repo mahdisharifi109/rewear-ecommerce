@@ -1,10 +1,7 @@
-'use client';
-
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
-import { Product } from '@/types/index';
+import { Product } from '../../../types/index';
 
 interface ProductCardProps {
   product: Product;
@@ -16,24 +13,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* User Info Header */}
       <div className="flex items-center gap-2 mb-2">
          <div className="w-5 h-5 rounded-full bg-gray-200 overflow-hidden relative">
-            <Image 
+            <img 
                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${product.sellerId}`} 
                 alt="User" 
-                fill
-                className="object-cover"
+                className="object-cover w-full h-full"
             />
          </div>
          <span className="text-xs text-muted-foreground truncate">member{product.sellerId}</span>
       </div>
 
       {/* Product Image */}
-      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] overflow-hidden rounded-sm bg-secondary">
-        <Image
+      <Link to={`/product/${product.id}`} className="block relative aspect-[3/4] overflow-hidden rounded-sm bg-secondary">
+        <img
           src={product.imageUrls[0]}
           alt={product.name}
-          fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         />
         
         {/* Status Overlay */}

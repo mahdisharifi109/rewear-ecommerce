@@ -2,10 +2,15 @@ import React from 'react';
 import { HashRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Header from './components/Header';
-import Home from './pages/Home';
-import ProductDetails from './pages/ProductDetails';
-import Sell from './pages/Sell';
-import Profile from './pages/Profile';
+import Home from './src/pages/Home';
+import Search from './src/pages/Search';
+import ProductDetails from './src/pages/ProductDetails';
+import Sell from './src/pages/Sell';
+import Profile from './src/pages/Profile';
+import Login from './src/pages/Login';
+import Register from './src/pages/Register';
+import { Messages } from './src/pages/Messages';
+import OrderDetails from './src/pages/OrderDetails';
 
 // Initialize QueryClient
 const queryClient = new QueryClient({
@@ -69,9 +74,14 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="search" element={<Search />} />
             <Route path="product/:id" element={<ProductDetails />} />
             <Route path="sell" element={<Sell />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="orders/:id" element={<OrderDetails />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
           </Route>
         </Routes>
       </HashRouter>

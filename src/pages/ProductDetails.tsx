@@ -1,8 +1,9 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Product } from '../types';
+import { Product, ProductCategory, ProductCondition } from '../types/index';
 import { User, ShieldCheck, MapPin, Heart, Share2 } from 'lucide-react';
+import { useAuthStore } from '../features/auth/store';
 
 const fetchProductById = async (id: string): Promise<Product> => {
     // Mock fetch
@@ -12,9 +13,9 @@ const fetchProductById = async (id: string): Promise<Product> => {
       name: 'Vintage Denim Jacket',
       description: 'Classic 90s oversized denim jacket in perfect wash. Heavy cotton, no rips or tears. A timeless piece that goes with everything.',
       price: 15.00,
-      category: 'Clothing',
+      category: ProductCategory.CLOTHING,
       size: 'L / 40',
-      condition: 'like-new',
+      condition: ProductCondition.LIKE_NEW,
       status: 'available',
       sellerId: 'user1',
       imageUrls: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1000'],
@@ -25,12 +26,47 @@ const fetchProductById = async (id: string): Promise<Product> => {
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { token, user } = useAuthStore();
   
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: () => fetchProductById(id || ''),
     enabled: !!id
   });
+
+  const handleMessage = async () => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    if (user?.id === product?.sellerId) {
+      alert("You can't message yourself!");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3001/api/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product?.id,
+          sellerId: product?.sellerId,
+        }),
+      });
+
+      if (response.ok) {
+        const conversation = await response.json();
+        navigate('/messages', { state: { conversationId: conversation.id } });
+      }
+    } catch (error) {
+      console.error('Failed to start conversation', error);
+    }
+  };
 
   if (isLoading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
   if (!product) return <div>Product not found</div>;
@@ -95,7 +131,9 @@ const ProductDetails = () => {
                     <button className="w-full bg-primary text-white font-medium py-3 rounded-md hover:bg-primary/90 transition-colors shadow-sm">
                         Buy now
                     </button>
-                    <button className="w-full border border-primary text-primary font-medium py-3 rounded-md hover:bg-primary/5 transition-colors">
+                    <button 
+                        onClick={handleMessage}
+                        className="w-full border border-primary text-primary font-medium py-3 rounded-md hover:bg-primary/5 transition-colors">
                         Message
                     </button>
                 </div>

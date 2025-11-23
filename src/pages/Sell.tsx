@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Upload, Sparkles, Loader2, Plus } from 'lucide-react';
-import { generateProductDescription } from '../services/geminiService';
+import { generateProductDescription } from '../../services/geminiService';
 import { cn } from '../lib/utils';
 
 const productSchema = z.object({
@@ -20,6 +20,8 @@ type ProductFormValues = z.infer<typeof productSchema>;
 const Sell = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     register,
@@ -39,9 +41,11 @@ const Sell = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-        // Simple preview logic for demo
-        const newPreviews: string[] = [];
-        Array.from(files).forEach((file: File) => {
+        const newFiles = Array.from(files);
+        setSelectedFiles(prev => [...prev, ...newFiles]);
+
+        // Preview logic
+        newFiles.forEach((file: File) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewImages(prev => [...prev, reader.result as string]);
@@ -49,6 +53,27 @@ const Sell = () => {
             reader.readAsDataURL(file);
         });
     }
+  };
+
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    const uploadPromises = files.map(async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://localhost:3001/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+
+      const data = await response.json();
+      return data.url;
+    });
+
+    return Promise.all(uploadPromises);
   };
 
   const handleGenerateDescription = async () => {
@@ -76,8 +101,46 @@ const Sell = () => {
   };
 
   const onSubmit = async (data: ProductFormValues) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    alert("Product listed! (Mock)");
+    if (selectedFiles.length === 0) {
+      alert("Please upload at least one photo.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // 1. Upload Images in Parallel
+      const imageUrls = await uploadImages(selectedFiles);
+
+      // 2. Create Product
+      const productData = {
+        ...data,
+        id: crypto.randomUUID(), // Generate ID on client or let DB handle it (if auto-increment)
+        imageUrls,
+        sellerId: 'user_demo', // Replace with real auth user ID
+      };
+
+      const response = await fetch('http://localhost:3001/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create product');
+      }
+
+      alert("Product listed successfully!");
+      // Reset form or redirect
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error("Error listing product:", error);
+      alert("Failed to list product. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -213,10 +276,11 @@ const Sell = () => {
         <div className="pt-6 flex justify-end">
             <button 
                 type="submit" 
-                disabled={isSubmitting}
-                className="w-full md:w-auto bg-primary text-white font-medium py-3 px-8 rounded-md hover:bg-primary/90 transition-all shadow-sm disabled:opacity-70"
+                disabled={isSubmitting || isUploading}
+                className="w-full md:w-auto bg-primary text-white font-medium py-3 px-8 rounded-md hover:bg-primary/90 transition-all shadow-sm disabled:opacity-70 flex items-center justify-center gap-2"
             >
-                {isSubmitting ? 'Uploading...' : 'Upload'}
+                {(isSubmitting || isUploading) && <Loader2 className="animate-spin h-4 w-4" />}
+                {isUploading ? 'Uploading Photos...' : isSubmitting ? 'Saving...' : 'Upload'}
             </button>
         </div>
       </form>

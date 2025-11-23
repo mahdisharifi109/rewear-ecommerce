@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import ProductCard from '../components/ui/ProductCard';
+import ProductCard from '../features/products/components/ProductCard';
 import { Product } from '../types';
 import { X, PackageOpen } from 'lucide-react';
 import { getProducts } from '../features/products/actions';

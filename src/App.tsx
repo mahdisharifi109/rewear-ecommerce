@@ -7,6 +7,10 @@ import Search from './pages/Search';
 import ProductDetails from './pages/ProductDetails';
 import Sell from './pages/Sell';
 import Profile from './pages/Profile';
+import { Messages } from './pages/Messages';
+import OrderDetails from './pages/OrderDetails';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 // Initialize QueryClient
 const queryClient = new QueryClient({
@@ -74,6 +78,10 @@ const App = () => {
             <Route path="product/:id" element={<ProductDetails />} />
             <Route path="sell" element={<Sell />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="orders/:id" element={<OrderDetails />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
           </Route>
         </Routes>
       </HashRouter>
