@@ -1,0 +1,35 @@
+{
+  "name": "rewear---second-hand-fashion",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-router-dom": "^7.9.6",
+    "react-dom": "^19.2.0",
+    "@google/genai": "^1.30.0",
+    "lucide-react": "^0.554.0",
+    "tailwind-merge": "^3.4.0",
+    "react-hook-form": "^7.66.1",
+    "zod": "^4.1.12",
+    "@tanstack/react-query": "^5.90.10",
+    "clsx": "^2.1.1",
+    "@hookform/resolvers": "^5.2.2",
+    "firebase-functions": "^7.0.0",
+    "firebase-admin": "^13.6.0",
+    "firebase": "^12.6.0",
+    "zustand": "^5.0.8",
+    "next": "^16.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

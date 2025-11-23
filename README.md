@@ -1,11 +1,42 @@
-<div align="center">
+# Rewear - Second Hand Fashion Marketplace
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Rewear is a modern C2C (Consumer-to-Consumer) fashion marketplace application built with **React**, **Tailwind CSS**, and **Firebase** patterns. It features a clean, responsive UI inspired by platforms like Vinted, with AI-powered features for product listing.
 
-  <h1>Built with AI Studio</h2>
+## Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- 🛍️ **Browse & Search**: Advanced filtering by category, size, price, and sorting.
+- 💾 **State Persistence**: Search filters and user preferences are saved automatically so you don't lose your place.
+- 🤖 **AI-Assisted Selling**: Uses Google Gemini API to auto-generate product descriptions based on item details.
+- 📱 **Responsive Design**: Fully mobile-optimized interface with a drawer menu.
+- ⚡ **Performance**: Built with React and optimized for fast interactions.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Tech Stack
 
-</div>
+- **Frontend**: React, TypeScript, Tailwind CSS
+- **Routing**: React Router DOM
+- **Data Fetching**: TanStack Query (React Query)
+- **State Management**: Local State & URL Parameters
+- **AI Integration**: Google GenAI SDK
+
+## Getting Started
+
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Project Structure
+
+- `/src/components`: Reusable UI components (Header, ProductCard, etc.)
+- `/src/pages`: Main view components (Home, Search, ProductDetails, etc.)
+- `/src/features`: Feature-specific logic (products, actions, etc.)
+- `/src/lib`: Utilities and configuration
+
+## License
+
+MIT
